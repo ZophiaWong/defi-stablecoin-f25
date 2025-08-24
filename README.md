@@ -1,66 +1,94 @@
-## Foundry
+# A Minimal Stablecoin
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A brief one-sentence description of your project.
 
-Foundry consists of:
+## Description
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+This project is meant to be a stablecoin where users can deposit WETH and WBTC in exchange for a token that will be pegged to the USD.
 
-## Documentation
+### Features
 
-https://book.getfoundry.sh/
+- Stablecoin Mechanism:
+  1. Relative Stability: Anchored or Pegged -> $1.00
+     1. Chainlink Price feed.
+     2. Set a function to exchange ETH & BTC -> $$$
+  2. Stability Mechanism (Minting): Algorithmic (Decentralized)
+     1. Only can mint the stablecoin with enough collateral (coded)
+  3. Collateral: Exogenous (Crypto)
+     1. wETH
+     2. wBTC
+- State of the art fuzz testing methodologies
+- Safe use of oracles
+- multifaceted test suites
+- integration and deployment through scripts
+- As well as multiple [deploying scripts](#deploying) and [testing](#testing).
+
+## Table of Contents
+
+- [A Minimal Stablecoin](#a-minimal-stablecoin)
+  - [Description](#description)
+    - [Features](#features)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Steps](#steps)
+      - [Quickstart](#quickstart)
+  - [Usage](#usage)
+    - [Configuration](#configuration)
+    - [Deploying](#deploying)
+    - [Testing](#testing)
+        - [Test Coverage](#test-coverage)
+
+## Installation
+
+### Prerequisites
+
+- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+  - You'll know you did it right if you can run `git --version` and you see a response like `git version x.x.x`
+- [foundry](https://getfoundry.sh/)
+  - You'll know you did it right if you can run `forge --version` and you see a response like `forge 0.2.0 (816e00b 2023-03-16T00:05:26.396218Z)`
+
+### Steps
+
+#### Quickstart
+
+```
+git clone https://github.com/ZophiaWong/defi-stablecoin-f25
+cd defi-stablecoin-f25
+forge build
+```
 
 ## Usage
 
-### Build
+### Configuration
 
-```shell
-$ forge build
+Explain environment variables or config files.
+| Variable | Description | Default |
+| --- | --- | --- |
+| qw | ad | default |
+
+### Deploying
+
+### Testing
+
+4 test tiers：
+
+1. Unit
+
+1. Integration
+
+1. Forked
+
+1. Staging
+
+##### Test Coverage
+
+```
+forge coverage
 ```
 
-### Test
+and for coverage based testing:
 
-```shell
-$ forge test
 ```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+forge coverage --report debug
 ```

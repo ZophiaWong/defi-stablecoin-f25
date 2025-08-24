@@ -1,26 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-// Layout of Contract:
-// version
-// imports
-// interfaces, libraries, contracts
-// errors
-// Type declarations
-// State variables
-// Events
-// Modifiers
-// Functions
-
-// Layout of Functions:
-// constructor
-// receive function (if exists)
-// fallback function (if exists)
-// external
-// public
-// internal
-// private
-// view & pure functions
-
 pragma solidity ^0.8.19;
 
 import {DecentralizedStableCoin} from "src/DecentralizedStableCoin.sol";
@@ -39,12 +18,12 @@ import {console} from "forge-std/console.sol";
  * - Dollar Pegged
  * - Algorithmic Stable
  *
- * It is similiar to DAI if  DAI had no governance, no fees， and was backed by wETH and wBTC.
+ * It is similar to DAI if  DAI had no governance, no fees， and was backed by wETH and wBTC.
  * Our DSC system should always be "over-collateralized".
- * At no point. should the value of all the colleteral < the $ backed value of all the USC.
+ * At no point. should the value of all the collateral < the $ backed value of all the USC.
  *
  * @notice The contract is the core of the Decentralized Stablecoin system.
- *  It handles all the logic for minting and redee,ing DSC, as well as depositing and withdrawaing collateral.
+ *  It handles all the logic for minting and redeeming DSC, as well as depositing and withdrawing collateral.
  *
  * @notice This contract is based on the MakerDAO DSS (DAI) system
  */
