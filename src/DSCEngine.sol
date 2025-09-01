@@ -43,22 +43,59 @@ contract DSCEngine is ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
                                  State Variables
     //////////////////////////////////////////////////////////////*/
+    /**
+     * @dev Mapping of token address to its Chainlink price feed address.
+     */
     mapping(address token => address priceFeed) private s_priceFeeds; // tokenToPriceFeed
+    /**
+     * @dev The DecentralizedStableCoin (DSC) token contract.
+     */
     DecentralizedStableCoin private immutable i_dsc;
+    /**
+     * @dev Mapping from user address to another mapping of token address to the amount of collateral deposited.
+     */
     mapping(address user => mapping(address token => uint256 amount)) private s_collateralDeposited;
+    /**
+     * @dev Mapping from user address to the amount of DSC they have minted.
+     */
     mapping(address user => uint256 amountDscMinted) private s_DSCMinted;
+    /**
+     * @dev Array of addresses of tokens that can be used as collateral.
+     */
     address[] private s_collateralTokens;
 
+    /**
+     * @dev The precision of the additional feed.
+     */
     uint256 private constant ADDITIONAL_FEED_PRECISION = 1e10;
+    /**
+     * @dev The precision for calculations.
+     */
     uint256 private constant PRECISION = 1e18;
+    /**
+     * @dev The liquidation threshold, if a user's collateral value drops below this percentage of their debt, they can be liquidated.
+     */
     uint256 private constant LIQUIDATION_THRESHOLD = 50;
+    /**
+     * @dev The precision for liquidation calculations.
+     */
     uint256 private constant LIQUIDATION_PRECISION = 100;
+    /**
+     * @dev The minimum health factor a user must maintain to avoid liquidation.
+     */
     uint256 private constant MIN_HEALTH_FACTOR = 1e18;
+    /**
+     * @dev The bonus percentage given to liquidators as a reward.
+     */
     uint256 private constant LIQUIDATION_BONUS = 10;
 
     /*//////////////////////////////////////////////////////////////
                                  MODIFIERS
     //////////////////////////////////////////////////////////////*/
+    /**
+     * @dev Modifier to check if an amount is greater than zero.
+     * @param amount The amount to check.
+     */
     modifier moreThanZero(uint256 amount) {
         if (amount <= 0) {
             revert DSCEngine__NeedsMoreThanZero();
@@ -66,6 +103,10 @@ contract DSCEngine is ReentrancyGuard {
         _;
     }
 
+    /**
+     * @dev Modifier to check if a token is allowed as collateral.
+     * @param token The address of the token to check.
+     */
     modifier isAllowedToken(address token) {
         if (s_priceFeeds[token] == address(0)) {
             revert DSCEngine__TokenNotAllowed(token);
@@ -76,7 +117,20 @@ contract DSCEngine is ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
+    /**
+     * @dev Event emitted when collateral is deposited.
+     * @param user The user who deposited the collateral.
+     * @param token The token that was deposited.
+     * @param amount The amount of the token that was deposited.
+     */
     event CollateralDeposited(address indexed user, address indexed token, uint256 indexed amount);
+    /**
+     * @dev Event emitted when collateral is redeemed.
+     * @param redeemedFrom The user whose collateral was redeemed.
+     * @param redeemedTo The user who received the redeemed collateral.
+     * @param token The token that was redeemed.
+     * @param amount The amount of the token that was redeemed.
+     */
     event CollateralRedeemed(
         address indexed redeemedFrom, address indexed redeemedTo, address indexed token, uint256 amount
     );
@@ -85,6 +139,12 @@ contract DSCEngine is ReentrancyGuard {
                                  FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @dev Initializes the contract with token addresses, price feed addresses, and the DSC address.
+     * @param tokenAddresses An array of addresses of tokens that can be used as collateral.
+     * @param priceFeedAddresses An array of addresses of the Chainlink price feeds for the corresponding tokens.
+     * @param dscAddress The address of the DecentralizedStableCoin contract.
+     */
     constructor(address[] memory tokenAddresses, address[] memory priceFeedAddresses, address dscAddress) {
         if (tokenAddresses.length != priceFeedAddresses.length) {
             revert DSCEngine__TokenAddressesAndPriceFeedAddressesMustBeSameLength();
@@ -253,6 +313,8 @@ contract DSCEngine is ReentrancyGuard {
     function _revertIfHealthFactorIsBroken(address user) private view {
         // assure that changes in a user's DSC or collateral balances don't result in the user's position being `under-collateralized`
         uint256 userHealthFactor = _healthFactor(user);
+        console.log("user: ", user);
+        console.log("healthFactor: ", userHealthFactor);
         if (userHealthFactor < MIN_HEALTH_FACTOR) {
             revert DSCEngine__BreakHealthFactor(userHealthFactor);
         }
@@ -339,7 +401,11 @@ contract DSCEngine is ReentrancyGuard {
     }
 
     // * View an account's `healthFactor`
-    function getHealthFactor() external view {}
+    function getHealthFactor() external view returns (uint256) {
+        //
+        console.log("msg.sender: ", msg.sender);
+        return _healthFactor(msg.sender);
+    }
 
     function getCollateralTokens() external view returns (address[] memory) {
         return s_collateralTokens;
